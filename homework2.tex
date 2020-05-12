@@ -1,0 +1,404 @@
+% 预定义包
+\documentclass[a4paper, 11pt]{article}
+
+% 文档页面设置
+\usepackage[top = 20mm, bottom = 20mm, left = 25mm, right = 25mm]{geometry}
+% 中文字体可选
+%\usepackage{CJKutf8}
+\usepackage[UTF8]{ctex}
+% (可选)设置中文首段缩进两个字符
+\usepackage{indentfirst}
+\setlength{\parindent}{2em}
+% 英文字体Times New Roman
+\usepackage{times}
+\usepackage{mathptmx}
+% 颜色字体
+\usepackage{xcolor}
+% 数学公式与符号
+\usepackage{amsmath}
+\usepackage{amssymb}
+% 图像模块
+\usepackage{graphicx}
+% 生成有序列表
+\usepackage{enumerate}
+% 绘制三线表
+\usepackage{booktabs}
+% 表格排版横跨两行以上的文本
+\usepackage{multirow}
+% 多行注释
+\usepackage{verbatim}
+% 图表
+\usepackage{pgfplots,pgfplotstable}
+\pgfplotsset{compat=1.16}
+\usetikzlibrary{pgfplots.statistics}
+
+\usepackage{filecontents}
+%\usepackage[anchorcolor=true]{hyperref}
+\usepackage{comment}
+
+\usepackage{float} %设置图片浮动位置的宏包
+\usepackage{subfigure} %插入多图时用子图显示的宏包
+
+\linespread{1.4}
+\setlength{\parskip}{0.5\baselineskip}
+\begin{comment}
+% 定义中文格式
+\renewcommand{\contentsname}{目录}
+\renewcommand{\abstractname}{摘要}
+\renewcommand{\figurename}{图}
+\renewcommand{\tablename}{表}
+\renewcommand{\refname}{参考文献}
+\renewcommand{\appendixname}{附录}
+\end{comment}
+% 文档起始
+\begin{document}
+\begin{titlepage}
+	\centering
+	\rule{\textwidth}{1pt}   % The top horizontal rule
+	\vspace{0.025\textheight}  % Whitespace between top horizontal rule and title
+	
+	{\Huge \textbf{非参数统计第二次作业}}\\
+	{\Large 列联表}
+	
+	
+	\vspace{0.025\textheight}   % Whitespace between the title and short horizontal rule
+	\rule{0.83\textwidth}{0.4pt}  % The short horizontal rule under title
+	\vspace{0.1\textheight}  % Whitespace between the short horizontal rule and author
+	
+	{\Large \textsc{华中科技大学}}
+	
+	{\Large \textsc{数学与统计学院}}
+	
+	{\Large \textsc{统计1701班}}
+	
+	{\Large \textsc{尹恒}}
+	
+	{\Large \textsc{U201710027}}
+	
+	\vfill  % Whitespace between author and date
+	
+	{\large \today}
+	\vspace{0.1\textheight}  % Whitespace between date and bottom horizontal rule
+	
+	%------------------------------------------------------------
+	%    Bottom rules
+	%------------------------------------------------------------
+	
+	\rule{\textwidth}{1pt}  % The bottom horizontal rule
+\end{titlepage}
+% 字体由小到大：\tiny\scriptsize\footnotesize\small\normalsize\large\Large\LARGE\huge\Huge
+
+% 生成目录
+\tableofcontents
+
+\newpage
+
+\section{摘要}
+由于今年的特殊疫情，本文选取与医疗相关的三个股票板块，并进行板块的简要分析。在每个版块内各取二十支股票计算半年收益率。以此为基础，按照优良中三个级别分别进行概率一致性检验、按总中位数进行中位数检验，并计算$ Cram\acute{e}r $关联系数、$ Pearson $关联系数以及$ Pearson $均方关联系数，最后进行实验结果分析。本文还涉及到概率一致性检验中检验统计量适用于$ 2\times 2 $列联表的推论。
+\section{运用M-H检验解释辛普森悖论}
+\subsection{辛普森谬论}
+\textbf{辛普森悖论(Simpson's Paradox)}亦有人译为辛普森诡论，为英国统计学家E.H.辛普森(E.H.Simpson)于1951年提出的悖论，即在某个条件下的两组数据，分别讨论时都会满足某种性质，可是一旦合并考虑，却可能导致相反的结论。\\
+\indent 当人们尝试探究两种变量(比如新生录取率与性别)是否具有相关性的时候，会分别对之进行分组研究。然而，在分组比较中都占优势的一方，在总评中有时反而是失势的一方。该现象于20世纪初就有人讨论，但一直到1951年，E.H.辛普森在他发表的论文中阐述此一现象后，该现象才算正式被描述解释。后来就以他的名字命名此悖论，即辛普森悖论。此悖论的最终原因和选择偏差、幸存者偏差、以及柏克森悖论一样，是源自对撞因子。\\
+\indent 为了避免辛普森悖论的出现，就需要斟酌各分组的权重，并乘以一定的系数去消除以分组数据基数差异而造成的影响。同时，我们必需清楚了解情况，以综合考虑是否存在造成此悖论的潜在因素。
+\subsection{M-H检验}
+\subsubsection{实验原理}
+有吋需要将几个 $ 2 \times 2 $ 列联表合成一个做整体分析。当一个整体试验包括几个在不同环境中操作的小试验时，在零假设下的共问的概率随着环境的不同而不同，并且每一个小试检都有自己的 $ 2 \times 2 $ 列联表，这时常常需要进行这种处理。因为得到每个列联表的环境不同，所以这几个表不能合成单一的一个2 x 2 列联表。\\
+\textbf{数据}\quad 将数据综合以后放入几个 $ 2 \times 2 $ 列联表中，每个列联表的行列总和都是非随机的.
+假设表的数目 $ k \geq 2 $，并且第 i 个表具有如下形式:
+\begin{table}[!h]
+	\centering
+	\begin{tabular}{|c|c|c|c|}
+		\hline
+		&列1&列2&\\
+		\hline
+		行1&$ x_{i} $&$ r_{i}-x_{i} $&$ r_{i} $\\
+		\hline
+		行2&$ c_{i}-x_{i} $&$ N_{i}-r_{i}-c_{i}+x_{i} $&$ N_{i}-r{i} $\\
+		\hline
+		&$ c_{i} $&$ N_{i}-c_{i} $&$ N_{i} $\\
+		\hline
+	\end{tabular}
+\end{table}\\
+\textbf{假定条件} \\
+\indent 1.每个观测只归入到一个单元中。\\
+\indent 2.行列总和确定且不随机。\\
+\indent 3.几个列联表是由独立的实验得到的。\\
+\textbf{检验统计量}\\
+$$T_{4}=\frac{\sum x_{i}-\sum \frac{r_{i} c_{i}}{N_{i}}}{\sqrt{\sum \frac{r_{i} c_{i}\left(N_{i}-r_{i}\right)\left(N_{i}-c_{i}\right)}{N_{i}^{2}\left(N_{i}-1\right)}}}$$
+$ T_{4} $近似服从标准正态分布，即$ T_{4}\sim N(0,1) $\\
+\textbf{假设检验}:\\
+在第$ i $个列联表中， $p_{1 i}$ 是被归入第一行第一列中的观测的概率， $p_{2 i}$ 是第二行第一列相
+应的概率\\
+\\A.(双边检验)
+$$H_{0}: p_{1 i}=p_{2 i}, \quad \forall i=1,2, \dots, k$$
+$$H_{1}: p_{1 i}>p_{2 i}, \text { 对某个 } \mathrm{i} \text { 或 } p_{1 i}<p_{2 i}$$
+\\拒绝域$\left\{T_{4} \leq z_{\frac{\alpha}{2}}\right\} \cup\left\{T_{4} \geq z_{1-\frac{\alpha}{2}}\right\}$。
+\\B.(左边检验)
+$$H_{0}: p_{1 i}\geq p_{2 i}, \quad \forall i=1,2, \dots, k$$
+$$H_{1}: p_{1 i} \leq p_{2 i}, \quad \forall i=1,2, \ldots, k \text { 且对某个 } i \text { 有 } p_{1 i}<p_{2 i}$$
+\\拒绝域：$ \left\{T_{4} \leq z_{\alpha}\right\} $
+\\C.(右边检验)
+$$H_{0}: p_{1 i}\leq p_{2 i}, \quad \forall i=1,2, \dots, k$$
+$$H_{1}: p_{1 i} \geq p_{2 i}, \quad \forall i=1,2, \ldots, k \text { 且对某个 } i \text { 有 } p_{1 i}>p_{2 i}$$
+\\拒绝域：$ \left\{T_{4} \geq z_{\alpha}\right\} $
+
+注：若行或列随机，这种检验仍然有效， $T_{4}$ 换为如下 $T_{5}$ 更准确\\
+$$T_{5}=\frac{\sum x_{i}-\sum \frac{r_{i} c_{i}}{N_{i}}}{\sqrt{\sum \frac{r_{i} c_{i}\left(N_{i}-r_{i}\right)\left(N_{i}-c_{i}\right)}{N_{i}^{3}}}} \sim N(0,1)$$
+\subsubsection{检验实例}
+现有两个车间生产螺母和螺钉的合格率如下:\\
+\begin{table}[!h]
+	\centering
+	\begin{tabular}{|c|c|c|c|c|}
+		\hline
+		&不合格数&合格数&总计&不合格率\\
+		\hline
+		车间A&2300&25000&27300&8.4\%\\
+		\hline
+		车间B&2000&25000&27000&7.4\%\\
+		\hline
+		总计&4300&50000&54300&\\
+		\hline
+	\end{tabular}
+	\caption{整体统计数据}
+\end{table}
+\\如果不考虑将螺栓细分为螺钉和螺母，则两个车间的不合格率存在显著差异，且B车间的不合格率更低一些.\\
+\begin{table}[!h]
+	\centering
+	\begin{tabular}{|c|c|c|c|c|c|}
+		\hline
+		&车间&不合格数&合格数&总数&不合格率\\
+		\hline
+		\multirow{2}*{螺母}&车间A&2000&20000&22000&9.09\%\\
+		\cline{2-6}
+		&车间B&600&5000&5600&10.71\%\\
+		\hline
+		\multirow{2}*{螺钉}&车间A&300&5000&5300&5.66\%\\
+		\cline{2-6}
+		&车间B&1400&20000&21400&10.71\%\\
+		\hline
+	\end{tabular}
+	\caption{分组统计数据}
+\end{table}\\
+\indent 以螺钉和螺母作为层，则看到无论是哪一种产品，都是车间A的不合格率更低。\\
+作出假设：\\
+\indent $ H_{0}: $车间A不合格率高 \\
+\indent $ H_{1}: $车间A不合格率较低\\
+用M-H检验\\
+\indent $H_{0}: p_{1 i}\geq p_{2 i}, \quad \forall i=1,2, \dots, k$\\
+\indent $H_{1}: p_{1 i} \leq p_{2 i}, \quad \forall i=1,2, \ldots, k \text { 且对某个 } i \text { 有 } p_{1 i}<p_{2 i}$\\
+计算检验统计量$ T_{4}: $
+$$T_{4}=\frac{(2000+300)-(\frac{22000\times 2600}{27600}+\frac{5300\times 1700}{26700})}{\sqrt{\frac{22000\times 5600\times 2600\times 25000}{27600^{2}\times 27599}+\frac{5300\times 21400 \times 25000\times 1700}{26700^{2}\times 26699}}}=-4.3648<z_{0.95}$$
+\indent 故拒绝原假设，车间A的不合格率较低，从表一整体数据得到车间A的不合格率高。从统计学的角度来说我们的实验结果是没有错误的，说明我们的直觉出现了偏差，因此这种现象被称为谬论，从数据上看，由于车间A关于螺母和螺钉的不合格数差异非常大，导致整体数据发生变化，除此之外，应该有其他因素：比如每个工厂的机器不同，导致生产不同物品的能力不同，导致不合格率会有定向的偏差。\\
+\indent 想要避免辛普森谬论的出现，我们就应该在分析问题是注意分组的权重的影响，同时考虑是否有现实生活中的潜在因素进行综合分析，因为这种因素一般不容易从数据中直接观测到，没有接触到原始数据，所以要多加分析。
+\section{证明题2}
+\textbf{思考题:}
+\indent 证明:如果$r=2,c=2$,那么:
+$$T=\sum_{i=1}^{n} \sum_{j=1}^{c} \frac{\left(O_{i j}-E_{i j}\right)^{2}}{E_{i j}}, \text { 其中 } E_{i j}=\frac{n_{i} C_{j}}{N}$$
+等价于
+$$\mathrm{T}=\frac{N\left(O_{11} O_{22}-O_{12} O_{21}\right)^{2}}{n_{1} n_{2} C_{1} C_{2}}$$
+\textbf{证明:}
+\begin{equation}\nonumber
+\begin{aligned}
+T&=\sum_{i=1}^{2} \sum_{j=1}^{2} \frac{\left(O_{i j}-E_{i j}\right)^{2}}{E_{i j}} \\
+&=\frac{\left(O_{11}-\frac{n_{1} C_{1}}{N}\right)^{2}}{\frac{n_{1} C_{1}}{N}}+\frac{\left(O_{12}-\frac{n_{1} C_{2}}{N}\right)^{2}}{\frac{n_{1} C_{2}}{N}}+\frac{\left(O_{21}-\frac{n_{2} C_{1}}{N}\right)^{2}}{\frac{n_{2} C_{1}}{N}}+\frac{\left(O_{12}-\frac{n_{1} C_{2}}{N}\right)^{2}}{\frac{n_{1} C_{2}}{N}} \\
+&=\frac{\left(O_{11} N-n_{1} C_{1}\right)^{2}}{N n_{1} C_{1}}+\frac{\left(O_{12} N-n_{1} C_{2}\right)^{2}}{N n_{1} C_{2}}+\frac{\left(O_{21} N-n_{2} C_{1}\right)^{2}}{N n_{2} C_{1}}+\frac{\left(O_{22} N-n_{2} C_{2}\right)^{2}}{N n_{2} C_{2}} \\
+&=\frac{\left(O_{11} (n_{1}+n_{2})-n_{1}C_{1}\right)^{2}}{N n_{1} C_{1}}+\frac{\left(O_{12} (n_{1}+n_{2})-n_{1}C_{2}\right)^{2}}{N n_{1} C_{2}}+\frac{\left(O_{21} (n_{1}+n_{2})-n_{2}C_{1}\right)^{2}}{N n_{2} C_{1}}+\frac{\left(O_{22} (n_{1}+n_{2})-n_{2}C_{2}\right)^{2}}{N n_{2} C_{2}} \\
+&=\frac{\left(O_{11} n_{2}-O_{21} n_{1}\right)^{2}}{N n_{1} C_{1}}+\frac{\left(O_{12} n_{2}-O_{22} n_{1}\right)^{2}}{N n_{1} C_{2}}+\frac{\left(O_{21} n_{1}-O_{11} n_{2}\right)^{2}}{N n_{2} C_{1}}+\frac{\left(O_{22} n_{1}-O_{12} n_{2}\right)^{2}}{N n_{2} C_{2}} \\
+&=\frac{C_{2}\left(n_{2} O_{11}-n_{1} O_{21}\right)^{2}+C_{1}\left(n_{1} O_{22}-n_{2} O_{12}\right)^{2}}{n_{1} n_{2} C_{1} C_{2}}
+\end{aligned}
+\end{equation}
+对于上式的分子:
+\begin{equation}\nonumber
+\begin{aligned}
+\text{分子}
+=&\left(N-C_{1}\right)\left(n_{2} O_{11}-n_{1} O_{21}\right)^{2}+C_{1}\left(n_{1} O_{22}-n_{2} O_{12}\right)^{2} \\
+=&\left(N-C_{1}\right)\left(\left(N-n_{1}\right) O_{11}-n_{1} O_{21}\right)^{2}+C_{1}\left(n_{1} O_{22}-\left(N-n_{1}\right) O_{12}\right)^{2} \\
+=&\left(N-C_{1}\right)\left(O_{11} N-n_{1} C_{1}\right)^{2}+C_{1}\left(n_{1} C_{2}-O_{12} N\right)^{2} \\
+=&\left(N-C_{1}\right)\left(O_{11} N-n_{1} C_{1}\right)^{2}+C_{1}\left(n_{1}\left(N-C_{1}\right)-O_{12} N\right)^{2} \\
+=&\left(N-C_{1}\right)\left(O_{11} N-n_{1} C_{1}\right)^{2}+C_{1}\left(O_{11} N-n_{1} C_{1}\right)^{2} \\
+=& \;N\left(O_{11} N-n_{1} C_{1}\right)^{2}\\
+=& \;N\left(O_{11} O_{11}+O_{11} O_{12}+O_{11} O_{21}+O_{11} O_{22}-\left(O_{11}+O_{12}\right)\left(O_{11}+O_{21}\right)\right)^{2} \\
+=& \;N\left(O_{11} O_{22}-O_{12} O_{21}\right)^{2}
+\end{aligned}
+\end{equation}
+即
+$$\mathrm{T}=\frac{N\left(O_{11} O_{22}-O_{12} O_{21}\right)^{2}}{n_{1} n_{2} C_{1} C_{2}}$$
+原命题得证。
+\section{概率差异的$\chi^{2}$检验($r\times c$情形) }
+\subsection{实验原理}
+\noindent \textbf{数据}\\
+\indent 共有r个总体，从每一个总体中抽取一个随机变量。第$  i  $个样本的观测数为$ n_{i} $，每个样
+本的观测可归入 $ c $ 类中的一类，$ O_{ij} $为样本 $ i $ 的观测归入第 $ j $ 类的数目。\\
+\begin{table}[!h]
+	\centering
+	\begin{tabular}{cccccc}
+		
+		&类1&类2& $ \cdots $ &类c&总和\\
+		\cline{2-5}
+		\multicolumn{1}{c|}{总体1}&\multicolumn{1}{c|}{$ O_{11} $}&\multicolumn{1}{c|}{$ O_{12} $}&\multicolumn{1}{c|}{$\cdots $}&\multicolumn{1}{c|}{$ O_{1c} $}&$ n_{1} $\\
+		\cline{2-5}
+		\multicolumn{1}{c|}{总体2}&\multicolumn{1}{c|}{$ O_{21} $}&\multicolumn{1}{c|}{$ O_{22} $}&\multicolumn{1}{c|}{$\cdots $}&\multicolumn{1}{c|}{$ O_{2c} $}&$ n_{2} $\\
+		\cline{2-5}
+		\multicolumn{1}{c|}{$\cdots $}&\multicolumn{1}{c|}{$\cdots $}&\multicolumn{1}{c|}{$\cdots $}&\multicolumn{1}{c|}{$\cdots $}&\multicolumn{1}{c|}{$\cdots $}&$\cdots $\\
+		\cline{2-5}
+		\multicolumn{1}{c|}{总体r}&\multicolumn{1}{c|}{$ O_{r1} $}&\multicolumn{1}{c|}{$ O_{r2} $}&\multicolumn{1}{c|}{$\cdots $}&\multicolumn{1}{c|}{$ O_{rc} $}&$ n_{r} $\\
+		\cline{2-5}
+		&$ C_{1} $&$ C_{2} $&$\cdots$&$ C_{c} $&$ N $
+	\end{tabular}
+\end{table}\\
+\textbf{假定条件}\\
+\indent 1.每个样本都是一个随机样本。\\
+\indent 2.不同样本的输出结果是相互独立的。\\
+\indent 3.每个观测只能归入 $ c $类中的一类。\\
+\textbf{检验统计量} \quad 给定检验统计量$ T $为：
+$$T=\sum_{i=1}^{n} \sum_{j=1}^{c} \frac{O_{i j}^{2}}{E_{i j}}-N, \text { 其中 } E_{i j}=\frac{n_{i} C_{j}}{N}$$
+这时如果 $H_{0}$ 为真，$ O_{ij} $代表格 $(i, j)$ 的观测数，$ E_{ij} $ 代表格 $(i, j)$ 期望的观测数。\\
+\textbf{零分布} \quad
+$T$的零分布是渐近自由度为 $(r-1)(c-1)$ 的 $\chi^{2}$ 分布.即：
+$$T \sim \chi^{2}((r-1)(c-1))$$
+\textbf{假设}\quad 记 $p_{ij}$ 为随机取到第 $i$ 个总体划分为第 $j$ 个类的概率， $i=1,2, \cdots, r, j=1,2, \cdots c .$
+$$H_{0}: p_{1 j}=p_{2 j}=\cdots=p_{r j}, \forall j=1,2, \ldots, c$$
+$$H_{1}: \text{等式不全成立}$$
+拒绝域:$\left\{T \geq \chi_{1-\alpha}^{2}((r-1, c-1))\right\}$
+\subsection{检验过程}
+在英为财情上选择和医疗有关的三个板块，每个板块随机选取20支股票，记录数据并进行概率一致性检验。\\
+\indent 计算所有股票最近半年的收益率如下表：\\
+
+\begin{table}[!h]
+	\centering
+	\scalebox{0.7}{
+	\begin{tabular}{|c|c|c|c|c|c|}
+		\hline
+		长春高新 & 33.31 & 迈瑞医疗 & 40.9 & 恒瑞医药 & 6.26 \\ \hline
+		复星医药 & 26.43 & 乐普医疗 & 15.21 & 药明康德 & 10.48 \\ \hline
+		上海医药 & 0.71 & 健帆生物 & 54.82 & 智飞生物 & 59.4 \\ \hline
+		华东医药 & -18.17 & 鱼跃医疗 & 70.77 & 云南白药 & 1 \\ \hline
+		以岭药业 & 131.54 & 大博医疗 & 40.63 & 康泰生物 & 52.64 \\ \hline
+		九州岛通 & 26.71 & 欧普康视 & 39.15 & 片仔癀 & 27.65 \\ \hline
+		华润三九 & -8.3 & 南微医学科技 & 13.79 & 华兰生物 & 43.76 \\ \hline
+		步长制药 & 6.74 & 国药股份 & 14.33 & 沃森生物 & 24.75 \\ \hline
+		天士力 & -9.14 & 山东药玻 & 36.25 & 新 和 成 & 17.33 \\ \hline
+		信立泰 & -6.12 & 凯利泰 & 77.49 & 安图生物 & 39.66 \\ \hline
+		吉林敖东 & -6.78 & 蓝帆医疗 & 32.78 & 上海莱士 & 14.15 \\ \hline
+		浙江医药 & 33.93 & 中国医药 & 9.81 & 白云山 & -13.23 \\ \hline
+		海正药业 & 42.28 & 济民制药 & -14.96 & 凯莱英 & 45.74 \\ \hline
+		恩华药业 & 15.22 & 心脉医疗 & 30.66 & 康龙化成 & 24.33 \\ \hline
+		康恩贝 & -16.1 & Allmed Medical & 54.68 & 华熙生物 & 13.74 \\ \hline
+		东诚药业 & -1.61 & 英科医疗 & 239.48 & 华大基因 & 53.19 \\ \hline
+		金达威 & 2.92 & 开立医疗 & 22.3 & 健友股份 & 39.44 \\ \hline
+		中恒集团 & 3.68 & 三诺生物 & 16.54 & 贝达药业 & 43.68 \\ \hline
+		贵州百灵 & -5.4 & 万东医疗 & 40.89 & 丽珠集团 & 18.04 \\ \hline
+		海王生物 & 12.06 & 理邦仪器 & 83.8 & 天坛生物 & 21.98 \\ \hline
+	\end{tabular}
+	}
+\end{table}
+\indent 根据收益率划分等级：若收益率低于15\%,则记为中，若收益率高于15\%低于50\%，则记为良，若收益率大于50\%，则记为优.分别计算三个板块的等级统计数据如下:\\
+\begin{table}[!h]
+	\centering
+	\begin{tabular}{|c|c|c|c|c|}
+		\hline
+		&优&良&中&总和\\
+		\hline
+		医疗设备与用品&6&10&4&20\\
+		\hline
+		主要药物&1&6&13&20\\
+		\hline
+		生物技术与药物&3&11&6&20\\
+		\hline
+		总计&10&27&23&60\\
+		\hline
+	\end{tabular}
+	\caption{等级统计数据表}
+\end{table}\\
+分别对三个板块的等级做饼状图如下：\\
+
+\begin{figure}[!h]
+	\centering
+	\includegraphics[width=0.4\textwidth]{myplot11}
+	\caption{医疗设备与用药}
+\end{figure}
+\begin{figure}[!h]
+	\centering
+	\includegraphics[width=0.4\textwidth]{myplot12}
+	\caption{主要药物}
+\end{figure}
+\begin{figure}[!h]
+	\centering
+	\includegraphics[width=0.4\textwidth]{myplot13}
+	\caption{生物技术与药物}
+\end{figure}
+
+由图表可以看出三个板块在三个收益率等级的数量还是存在明显可见的差异，由此我们可以先预估概率一致性检验的结果为概率不一致。\\
+作出假设：\\
+\indent $H_{0}:$不用板块中股票半年收益率为优、良、中的概率相等\\
+\indent $H_{1}:$存在两个不同的板块的股票半年收益率为优、良、中的概率不同\\
+将观测数据代入得：\\
+$$T=\sum_{i=1}^{n} \sum_{j=1}^{c} \frac{O_{i j}^{2}}{E_{i j}}-N=11.1816>\chi^{2}_{0.95}(4)=9.488$$
+所以拒绝原假设，即三个板块的半年收益率有显著的等级差异。与预期估计一致。\\
+\section{中位数检验}
+用平均收益率做代表，检验三个板块收益率中位数是否相同。
+\subsection{实验原理}
+\noindent \textbf{数据}\\
+\indent 从$ C $个总体中各抽取容量为$ n_{i} $的随机样本，则可确定联合样本的中位数，我们称为总中
+位数。$ O_{1i} $为样本i超过总中位数的观测个数， $O_{2i}$ 为样本 $i \leqslant$ 总中位数的观测个数。\\
+可作如下列联表：\\
+\begin{table}[!h]
+	\centering
+	\begin{tabular}{cccccc}
+		
+		样本&1&2& $ \cdots $ &c&总和\\
+		\cline{2-5}
+		\multicolumn{1}{c|}{$>$总中位数}&\multicolumn{1}{c|}{$ O_{11} $}&\multicolumn{1}{c|}{$ O_{12} $}&\multicolumn{1}{c|}{$\cdots $}&\multicolumn{1}{c|}{$ O_{1c} $}&$ a $\\
+		\cline{2-5}
+		\multicolumn{1}{c|}{$ \leqslant $总中位数}&\multicolumn{1}{c|}{$ O_{21} $}&\multicolumn{1}{c|}{$ O_{22} $}&\multicolumn{1}{c|}{$\cdots $}&\multicolumn{1}{c|}{$ O_{2c} $}&$ b $\\
+		\cline{2-5}
+		&$ n_{1} $&$ n_{2} $&$\cdots $&$ n_{c} $&N
+	\end{tabular}
+\end{table}\\
+\textbf{假定条件}\\
+\indent 1.每一样本都是随机的。\\
+\indent 2.样本之间相互独立\\
+\indent 3.度量尺度至少是顺序的\\
+\indent 4.若所有总体有相同的中位数，则对所有总体而言，一个观测超过总中位数的概率相同，记为$ p $。\\
+\textbf{检验统计量}\\
+$$T=\sum_{i=1}^{c} \frac{\left(O_{1 i}-O_{2 i}\right)^{2}}{n_{i}}$$
+由于$ T $的精确分布很难求得，采用大样本逼近$T\sim \chi^{2}(c-1)$\\
+\textbf{假设检验}
+$$H_{0}:c\text{c个总体中有相同的中位数}$$
+$$H_{1}:\text{至少有两个总体的中位数不同}$$
+拒绝域：$\left\{T>\chi_{1-\alpha}^{2}(c-1)\right\}$\\
+\textbf{多重比较}\\
+\indent 若零假设被拒绝，可对$ 2\times2 $列联表重复地使用中位数检验，对总体间进行逐行多重比较。
+\subsection{检验过程}
+用excel处理数据后根据数据绘制列联表：\\
+\begin{table}[!h]
+	\centering
+	\begin{tabular}{ccccc}
+		&医疗设备与用品&主要药物&生物技术与药物&总和\\
+		\cline{2-4}
+		\multicolumn{1}{c|}{$>$总中位数}&\multicolumn{1}{c|}{$ 13 $}&\multicolumn{1}{c|}{$ 6 $}&\multicolumn{1}{c|}{$ 11 $}&$ 30 $\\
+		\cline{2-4}
+		\multicolumn{1}{c|}{$ \leqslant $总中位数}&\multicolumn{1}{c|}{7}&\multicolumn{1}{c|}{14}&\multicolumn{1}{c|}{9}&$ 30 $\\
+		\cline{2-4}
+		&20&20&20&60
+	\end{tabular}
+\end{table}\\
+做出假设：\\
+$$H_{0}:\text{三个板块的半年股票收益率有相同的中位数}$$
+$$H_{1}:\text{三个板块的半年股票收益率至少有两个总体的中位数不同}$$
+计算检验统计量观测值：\\
+$$T=\sum_{i=1}^{c} \frac{\left(O_{1 i}-O_{2 i}\right)^{2}}{n_{i}}=5.2<5.991$$
+故不能拒绝零假设，即认为三个板块近半年的股票收益率拥有相同的中位数。\\
+由表可以看出三个板块超过和不超过中位数的数量总数相等，但是每个板块的差异较大，统计结果不能拒绝原假设，在实际过程中就要注意是否有其他因素如极端数据等对实验结果的影响过大。
+\section{计算Cramer系数和$R_{2},R_{3}$}
+\subsection{$ Cram\acute{e}r$系数}
+$$T=\sum_{i=1}^{n} \sum_{j=1}^{c} \frac{O_{i j}^{2}}{E_{i j}}-N, \text { 其中 } E_{i j}=\frac{n_{i} C_{j}}{N}$$
+$$R_{1}=\frac{T}{T_{\max }}=\frac{T}{N(q-1)}$$
+$$ Cram\acute{e}r \text {系数 }=\sqrt{\frac{T}{N(q-1)}}=\sqrt{\frac{11.1816}{60 \times(3-1)}}=0.3053$$
+\subsection{Pearson关联系数}
+$$R_{2}=\sqrt{\frac{T}{T+N}}=\sqrt{\frac{11.1816}{11.1816+60}}=0.3963$$
+\subsection{Pearson均方关联系数}
+$$R_{3}=\frac{T}{N}=\frac{11.1816}{60}=0.1864$$
+\section{总结}
+本次作业涵盖了几乎所有的列联表相关内容，包括$ M-H $检验、概率一致性检验，中位数检验和相依性度量。从辛普森悖论这个很有趣的例子入手，熟悉了各种检验方式和计算，对辛普森悖论的原理，结果有了更清楚的认识。通过对数据的分析也让我更熟悉了python和excel，以及对latex更熟练，排版等更高效。
+\end{document}
